@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression,LinearRegression
 import argparse
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
 
 class MyLogisticRegression:
     def __init__(self, dataset_num, perform_test):
@@ -65,7 +65,10 @@ class MyLogisticRegression:
         
         if self.X_test is not None:
             # perform prediction here
-            pass
+            y_pred = self.model_linear.predict(self.X_test)
+            y_pred = np.sign(np.sign(y_pred - 0.5) + 1)
+            accuracy = accuracy_score(self.y_test, y_pred)
+            precision, recall, f1, support = precision_recall_fscore_support(self.y_test, y_pred)
         
         assert precision.shape == recall.shape == f1.shape == support.shape == (2,), "precision, recall, f1, support should be an array of shape (2,)"
         return [accuracy, precision, recall, f1, support]
