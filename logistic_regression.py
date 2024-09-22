@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression,LinearRegression
 import argparse
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
@@ -69,6 +70,8 @@ class MyLogisticRegression:
             y_pred = np.sign(np.sign(y_pred - 0.5) + 1)
             accuracy = accuracy_score(self.y_test, y_pred)
             precision, recall, f1, support = precision_recall_fscore_support(self.y_test, y_pred)
+            
+            print("\nClassification Report:\n", classification_report(self.y_test, y_pred))
         
         assert precision.shape == recall.shape == f1.shape == support.shape == (2,), "precision, recall, f1, support should be an array of shape (2,)"
         return [accuracy, precision, recall, f1, support]
@@ -88,9 +91,49 @@ class MyLogisticRegression:
             y_pred = self.model_logistic.predict(self.X_test)
             accuracy = accuracy_score(self.y_test, y_pred)
             precision, recall, f1, support = precision_recall_fscore_support(self.y_test, y_pred)
+            
+            print("\nClassification Report:\n", classification_report(self.y_test, y_pred))
         
         assert precision.shape == recall.shape == f1.shape == support.shape == (2,), "precision, recall, f1, support should be an array of shape (2,)"
         return [accuracy, precision, recall, f1, support]
+
+
+    def make_plot(self):
+        if self.dataset_num == '1':
+            x_min, x_max = self.X_test[:, 0].min() - 5, self.X_test[:, 0].max() + 5
+            y_min, y_max = self.X_test[:, 1].min() - 5, self.X_test[:, 1].max() + 5
+        elif self.dataset_num == '2':
+            x_min, x_max = self.X_test[:, 0].min() - 0.5, self.X_test[:, 0].max() + 0.5
+            y_min, y_max = self.X_test[:, 1].min() - 0.5, self.X_test[:, 1].max() + 0.5
+
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.01),
+                            np.arange(y_min, y_max, 0.01))
+        
+        Z_linear = self.model_linear.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z_linear = np.sign(np.sign(Z_linear - 0.5) + 1)
+        Z_linear = Z_linear.reshape(xx.shape)
+
+        Z_logistic = self.model_logistic.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z_logistic = Z_logistic.reshape(xx.shape)
+
+        figure, ([linear_plot, logistic_plot]) = plt.subplots(1,2)
+        figure.suptitle('Data Set %d' % int(self.dataset_num))
+        
+        linear_plot.contourf(xx, yy, Z_linear, alpha=0.6)
+        linear_plot.scatter(self.X_test[:, 0], self.X_test[:, 1], c=self.y_test, edgecolors='k', marker='o', s=50)
+        linear_plot.set_title('Linear Regression')
+        linear_plot.set_xlabel('Test Score 1')
+        linear_plot.set_ylabel('Test Score 2')
+
+        logistic_plot.contourf(xx, yy, Z_logistic, alpha=0.6)
+        logistic_plot.scatter(self.X_test[:, 0], self.X_test[:, 1], c=self.y_test, edgecolors='k', marker='o', s=50)
+        logistic_plot.set_title('Logistic Regression')
+        logistic_plot.set_xlabel('Test Score 1')
+        logistic_plot.set_ylabel('Test Score 2')
+
+        plt.show()
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Linear Regression')
@@ -100,4 +143,5 @@ if __name__ == '__main__':
     classifier = MyLogisticRegression(args.dataset_num, args.perform_test)
     acc_linear = classifier.model_predict_linear()
     acc_logistic = classifier.model_predict_logistic()
+    classifier.make_plot()
     
