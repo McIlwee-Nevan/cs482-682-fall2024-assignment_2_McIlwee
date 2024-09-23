@@ -71,7 +71,7 @@ class MyLogisticRegression:
             accuracy = accuracy_score(self.y_test, y_pred)
             precision, recall, f1, support = precision_recall_fscore_support(self.y_test, y_pred)
             
-            print("\nClassification Report:\n", classification_report(self.y_test, y_pred))
+            print("Linear Regression Report:\n", classification_report(self.y_test, y_pred))
         
         assert precision.shape == recall.shape == f1.shape == support.shape == (2,), "precision, recall, f1, support should be an array of shape (2,)"
         return [accuracy, precision, recall, f1, support]
@@ -92,7 +92,7 @@ class MyLogisticRegression:
             accuracy = accuracy_score(self.y_test, y_pred)
             precision, recall, f1, support = precision_recall_fscore_support(self.y_test, y_pred)
             
-            print("\nClassification Report:\n", classification_report(self.y_test, y_pred))
+            print("Logistic Regression Report:\n", classification_report(self.y_test, y_pred))
         
         assert precision.shape == recall.shape == f1.shape == support.shape == (2,), "precision, recall, f1, support should be an array of shape (2,)"
         return [accuracy, precision, recall, f1, support]
