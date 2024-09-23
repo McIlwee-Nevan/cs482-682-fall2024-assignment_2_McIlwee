@@ -34,7 +34,6 @@ class MykmeansClustering:
         
         cluster_centers = self.model.cluster_centers_
         num_clusters = clusters_centers.shape[0]
-        labels = np.arange(num_clusters)
 
         x_min, x_max = self.data[:, 0].min() - 1, self.data[:, 0].max() + 1
         y_min, y_max = self.data[:, 1].min() - 1, self.data[:, 1].max() + 1
@@ -48,7 +47,7 @@ class MykmeansClustering:
         plt.title("K-Means: %d Clusters" % num_clusters)
         plt.contourf(xx, yy, Z, alpha=0.6)
         plt.scatter(self.data[:, 0], self.data[:, 1], c=self.model.labels_, edgecolors='k', marker='o', s=50)
-        plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], c=labels, edgecolors='k', marker='s', s=100)
+        plt.scatter(cluster_centers[:, 0], cluster_centers[:, 1], c='blue', edgecolors='k', marker='*', s=200)
 
         plt.show()
 
